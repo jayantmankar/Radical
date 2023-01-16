@@ -3,24 +3,45 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
     }
+
 	agent {label 'JAVA'}
+
     tools {
         maven 'maven-3.8.7'
     }
+
     stages {
+        stage('Checking JAVA, Maven,git') {
+            steps {
+                echo 'Code Compilation is In Progress!'
+                sh 'mvn --version'
+                sh 'java --version'
+                sh 'git --version'
+                sh 'whoami'
+                echo "this pipeline is running via Jenkins User"
+            }
+        }
         stage('Code Compilation') {
             steps {
-                echo 'code compilation is starting'
+                echo 'Code Compilation is In Progress!'
+                sh 'mvn --version'
                 sh 'mvn clean compile'
-				echo 'code compilation is completed'
+            }
+        }
+
+        stage('Code QA Execution') {
+            steps {
+                echo 'Junit Test case check in Progress!'
+                sh 'mvn --version'
+                sh 'mvn clean test'
             }
         }
         stage('Code Package') {
             steps {
-                echo 'code packing is starting'
+                echo 'Creating War Artifact'
+                sh 'java -version'
                 sh 'mvn clean package'
-				echo 'code packing is completed'
             }
         }
-    }
+  }
 }
